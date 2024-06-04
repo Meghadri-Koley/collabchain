@@ -5,24 +5,22 @@ const cors = require("cors")
 const dotenv = require("dotenv");
 const fileUpload = require('express-fileupload');
 const http = require("http");
-const { Server } = require("socket.io");
-const { initializeSocketIO } = require("./socket/index.js");
 dotenv.config();
 const path = require('path');
 const mongoSanitize = require('express-mongo-sanitize');
 
 const app=express();
 app.use(mongoSanitize());
-const httpServer = http.createServer(app);
-const io = new Server(httpServer, {
-  pingTimeout: 60000,
-  cors: {
-    origin: `${process.env.FRONTEND}`,
-    credentials: true,
-  },
-});
+// const httpServer = http.createServer(app);
+// const io = new Server(httpServer, {
+//   pingTimeout: 60000,
+//   cors: {
+//     origin: `${process.env.FRONTEND}`,
+//     credentials: true,
+//   },
+// });
 
-app.set("io", io); // using set method to mount the `io` instance on the app to avoid usage of `global`
+// app.set("io", io); // using set method to mount the `io` instance on the app to avoid usage of `global`
 
 app.use('/uploads', express.static(path.join(__dirname,'uploads')));
 app.use(express.json())
@@ -50,6 +48,4 @@ app.use("/api/message", message)
 //Middleware for errors
 app.use(errorMiddleware);
 
-initializeSocketIO(io);
-
-module.exports = httpServer;
+module.exports = app;
